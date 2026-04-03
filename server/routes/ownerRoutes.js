@@ -9,6 +9,7 @@ import {
   updateHotel,
   deleteHotel,
   deleteRoom,
+  getOwnerHotelRooms,
 } from '../controllers/ownerController.js';
 import { protect, owner } from '../middleware/authMiddleware.js';
 import upload from '../middleware/uploadMiddleware.js';
@@ -21,6 +22,7 @@ router.route('/hotels/:id').put(protect, owner, updateHotel).delete(protect, own
 router.post('/hotels/:id/rooms', protect, owner, addRoomToHotel);
 router.post('/upload', protect, owner, upload.single('image'), uploadImage);
 router.get('/bookings', protect, owner, getOwnerBookings);
+router.get('/hotels/:id/rooms', protect, owner, getOwnerHotelRooms);
 router.delete('/rooms/:id', protect, owner, deleteRoom);
 
 export default router;

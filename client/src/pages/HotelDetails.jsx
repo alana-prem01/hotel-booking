@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -19,6 +19,8 @@ const HotelDetails = () => {
   const [checkOut, setCheckOut] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
   const [guests, setGuests] = useState(1);
+  const [availability, setAvailability] = useState({ available: true, message: '' });
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
 
   useEffect(() => {
     const fetchHotel = async () => {
@@ -35,7 +37,49 @@ const HotelDetails = () => {
     fetchHotel();
   }, [id]);
 
-  const handleBooking = () => {
+  // Handle auto-selection from URL
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const roomId = queryParams.get('roomId');
+    if (roomId && rooms.length > 0) {
+      setSelectedRoom(roomId);
+    }
+  }, [location.search, rooms]);
+
+  // Check availability
+  useEffect(() => {
+    const checkRoomAvailability = async () => {
+      if (!selectedRoom || !checkIn || !checkOut) {
+        setAvailability({ available: true, message: '' });
+        return;
+      }
+
+      const start = new Date(checkIn);
+      const end = new Date(checkOut);
+      if (end <= start) {
+        setAvailability({ available: false, message: 'Check-out must be after check-in' });
+        return;
+      }
+
+      setCheckingAvailability(true);
+      try {
+        const { data } = await axios.get(`/api/public/rooms/${selectedRoom}/availability`, {
+          params: { checkIn, checkOut }
+        });
+        setAvailability({ 
+          available: data.available, 
+          message: data.available ? '' : `Fully booked for these dates (${data.remaining} rooms left)`
+        });
+      } catch (error) {
+        console.error('Availability check failed:', error);
+      }
+      setCheckingAvailability(false);
+    };
+
+    checkRoomAvailability();
+  }, [selectedRoom, checkIn, checkOut]);
+
+  const handleBooking = async () => {
     if (!user) {
       toast.error('Please login to book a room');
       navigate('/login');
@@ -47,8 +91,33 @@ const HotelDetails = () => {
       return;
     }
 
+    setCheckingAvailability(true);
+    try {
+      // Final fresh check before checkout
+      const { data } = await axios.get(`/api/public/rooms/${selectedRoom}/availability`, {
+        params: { checkIn, checkOut }
+      });
+      
+      if (!data.available) {
+        setAvailability({ 
+          available: false, 
+          message: `Opps! The room was just booked (${data.remaining} left)` 
+        });
+        toast.error('Sorry, this room was just booked by someone else!');
+        setCheckingAvailability(false);
+        return;
+      }
+    } catch (error) {
+      console.error('Final availability check failed:', error);
+      toast.error('Could not verify availability. Please try again.');
+      setCheckingAvailability(false);
+      return;
+    }
+    setCheckingAvailability(false);
+
     const room = rooms.find(r => r._id === selectedRoom);
     const start = new Date(checkIn);
+
     const end = new Date(checkOut);
     const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
     
@@ -140,57 +209,108 @@ const HotelDetails = () => {
             </div>
           </div>
 
-          {/* ROOMS LISTING - NEW CARD UI */}
-          <div className="space-y-12">
-            <h2 className="text-3xl font-bold text-dark mb-10 font-display uppercase tracking-widest flex items-center gap-4">
-              <span className="w-16 h-0.5 bg-gold"></span>
-              AVAILABLE ROOM TYPES
-            </h2>
-            <div className="grid grid-cols-1 gap-8">
+          {/* ROOMS LISTING - PROFESSIONAL SUITE CARDS */}
+          <div className="space-y-16">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <span className="text-[10px] font-bold tracking-[0.4em] text-gold uppercase mb-3 block italic opacity-80">Accommodation</span>
+                <h2 className="text-4xl font-bold text-dark font-display uppercase tracking-wider leading-none">
+                  Available <br className="sm:hidden" />Room Types
+                </h2>
+              </div>
+              <div className="hidden sm:block w-32 h-px bg-gray-200 mb-4"></div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-12">
               {rooms.map(room => (
-                <div key={room._id} className={`group bg-white rounded-[2rem] border overflow-hidden flex flex-col md:flex-row shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-dark/5 ${selectedRoom === room._id ? 'border-gold ring-1 ring-gold' : 'border-gray-100'}`}>
-                   <div className="md:w-1/3 h-64 md:h-auto relative overflow-hidden">
+                <div 
+                  key={room._id} 
+                  className={`group relative bg-white rounded-[2.5rem] border overflow-hidden flex flex-col lg:flex-row min-h-[400px] transition-all duration-700 ${
+                    selectedRoom === room._id 
+                      ? 'border-gold shadow-2xl shadow-gold/10 ring-1 ring-gold/20' 
+                      : 'border-gray-100 shadow-xl shadow-dark/[0.02] hover:shadow-2xl hover:shadow-dark/10 hover:border-gold/30'
+                  }`}
+                >
+                  {/* Image Section - Left Part */}
+                  <div className="lg:w-[45%] h-72 lg:h-auto relative overflow-hidden">
                     <img 
-                      src={room.images?.[0] || hotel.images?.[0] || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80'} 
+                      src={room.images?.[0] || hotel.images?.[0] || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80'} 
                       alt={room.type} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                     />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-dark uppercase border border-white">
-                      {room.capacity} ADULTS
+                    <div className="absolute inset-0 bg-gradient-to-r from-dark/20 to-transparent pointer-events-none"></div>
+                    
+                    {/* Floating Badges */}
+                    <div className="absolute top-6 left-6 flex flex-col gap-2">
+                       <span className="bg-white/95 backdrop-blur-md text-dark px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase border border-white/20 shadow-xl">
+                        {room.capacity} GUESTS MAX
+                      </span>
+                      {room.isAvailable && (
+                        <span className="bg-gold/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase border border-gold/20 shadow-xl">
+                          Limited Units
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <div className="md:w-2/3 p-8 flex flex-col justify-between">
+
+                  {/* Content Section - Right Part */}
+                  <div className="lg:w-[55%] p-10 flex flex-col justify-between">
                     <div>
-                      <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-2xl font-bold text-dark uppercase tracking-wide">{room.type}</h3>
+                      <div className="flex items-start justify-between mb-6">
+                        <div>
+                          <span className="text-[9px] font-black tracking-[0.3em] text-gray-400 uppercase italic mb-1 block">Signature Suite</span>
+                          <h3 className="text-3xl font-bold text-dark font-display uppercase tracking-tight group-hover:text-gold transition-colors duration-500">
+                            {room.type}
+                          </h3>
+                        </div>
                         <div className="text-right">
-                          <span className="text-3xl font-bold text-dark">${room.price}</span>
-                          <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">PER NIGHT</span>
+                          <div className="flex items-baseline justify-end gap-1">
+                            <span className="text-[10px] font-bold text-gray-400">$</span>
+                            <span className="text-4xl font-extrabold text-dark tracking-tighter">{room.price}</span>
+                          </div>
+                          <span className="text-[9px] font-black text-gold uppercase tracking-[0.3em] block mt-1">PER NIGHT</span>
                         </div>
                       </div>
                       
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {room.amenities?.map((a, i) => (
-                          <span key={i} className="px-3 py-1 bg-gray-50 text-[10px] font-medium text-gray-500 rounded-full border border-gray-100 italic">
-                            # {a}
-                          </span>
+                      <div className="h-px w-full bg-gradient-to-r from-gray-100 via-gray-50 to-transparent mb-8"></div>
+                      
+                      <p className="text-gray-500 leading-relaxed text-sm mb-8 line-clamp-3 italic font-medium opacity-80">
+                        {room.description || "Discover a sanctuary of elegance and modern comfort, perfectly appointed for your sophisticated retreat."}
+                      </p>
+
+                      <div className="flex flex-wrap gap-3 mb-10">
+                        {room.amenities?.slice(0, 5).map((a, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-gray-50/80 px-4 py-2 rounded-xl border border-gray-100 transition-colors group-hover:border-gold/10">
+                            <div className="w-1.5 h-1.5 rounded-full bg-gold/50"></div>
+                            <span className="text-[10px] font-bold text-dark/70 uppercase tracking-widest">
+                              {a}
+                            </span>
+                          </div>
                         ))}
                       </div>
                     </div>
 
-                    <button 
-                      onClick={() => {
-                        setSelectedRoom(room._id);
-                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                      }}
-                      className={`w-full md:w-auto px-10 py-4 text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${
-                        selectedRoom === room._id 
-                        ? 'bg-gold text-white shadow-lg shadow-gold/20' 
-                        : 'bg-dark text-white hover:bg-gold'
-                      }`}
-                    >
-                      {selectedRoom === room._id ? 'ROOM SELECTED' : 'SELECT THIS ROOM'}
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center gap-6 mt-4">
+                      <button 
+                        onClick={() => {
+                          setSelectedRoom(room._id);
+                          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                        }}
+                        className={`w-full sm:flex-1 py-5 rounded-2xl text-[10px] font-black tracking-[0.4em] uppercase transition-all duration-500 relative overflow-hidden group/btn ${
+                          selectedRoom === room._id 
+                          ? 'bg-gold text-white shadow-2xl shadow-gold/30' 
+                          : 'bg-dark text-white hover:bg-gold shadow-xl shadow-dark/10'
+                        }`}
+                      >
+                         <span className="relative z-10 transition-transform duration-500 group-active/btn:scale-90 inline-block">
+                          {selectedRoom === room._id ? '✓ Suite Reserved' : 'Secure This Suite'}
+                        </span>
+                      </button>
+                      <div className="flex items-center gap-3 opacity-40 cursor-help px-2" title="Best Price Guaranteed">
+                         <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"></path></svg>
+                         <span className="text-[10px] font-bold uppercase tracking-widest">Guaranteed</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -232,14 +352,22 @@ const HotelDetails = () => {
                   {selectedRoom ? rooms.find(r => r._id === selectedRoom)?.type : 'Select a room above'}
                 </div>
               </div>
+
+              {availability.message && (
+                <div className={`p-4 rounded-xl text-[10px] font-bold uppercase tracking-widest ${availability.available ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                  {availability.message}
+                </div>
+              )}
             </div>
 
             <button 
               onClick={handleBooking} 
-              className="w-full py-5 bg-dark hover:bg-gold text-white text-xs font-bold tracking-[0.3em] uppercase rounded-xl shadow-xl shadow-dark/10 transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              disabled={!selectedRoom}
+              className={`w-full py-5 text-white text-xs font-bold tracking-[0.3em] uppercase rounded-xl shadow-xl shadow-dark/10 transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed ${
+                !availability.available ? 'bg-red-500 hover:bg-red-600' : 'bg-dark hover:bg-gold'
+              }`}
+              disabled={!selectedRoom || !availability.available || checkingAvailability}
             >
-              RESERVE NOW
+              {checkingAvailability ? 'CHECKING...' : !availability.available ? 'UNAVAILABLE' : 'RESERVE NOW'}
             </button>
             <p className="text-center text-[10px] font-bold text-gray-400 mt-6 tracking-widest uppercase italic">Secure Luxury Transaction</p>
           </div>

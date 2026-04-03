@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Booking from '../models/Booking.js';
+import Room from '../models/Room.js';
 import argon2 from 'argon2';
 
 // @desc    Get user profile
@@ -65,8 +66,14 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    // Check for overlapping bookings
-    const overlappingBooking = await Booking.findOne({
+    // Fetch room to check quantity
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
+    }
+
+    // Check for overlapping bookings count
+    const overlappingBookingsCount = await Booking.countDocuments({
       roomId,
       status: { $ne: 'cancelled' },
       $or: [
@@ -77,8 +84,8 @@ export const createBooking = async (req, res) => {
       ],
     });
 
-    if (overlappingBooking) {
-      return res.status(400).json({ message: 'Room is already booked for these dates' });
+    if (overlappingBookingsCount >= room.quantity) {
+      return res.status(400).json({ message: 'Room is unavailable for these dates (capacity reached)' });
     }
 
     const adminCommission = totalAmount * 0.20;

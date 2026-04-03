@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages to be created
@@ -40,6 +41,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/hotel/:id" element={<HotelDetails />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin-login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
@@ -67,6 +69,7 @@ function App() {
           
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

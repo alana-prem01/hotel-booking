@@ -30,6 +30,16 @@ const ManageOwners = () => {
     }
   };
 
+  const toggleBlock = async (id) => {
+    try {
+      const { data } = await axios.put(`/api/admin/owners/${id}/block`, {}, { withCredentials: true });
+      toast.success(data.message);
+      setOwners(owners.map(o => o._id === id ? { ...o, isBlocked: data.owner.isBlocked } : o));
+    } catch (error) {
+      toast.error('Failed to update blocking status');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Manage Owners</h1>
@@ -45,7 +55,7 @@ const ManageOwners = () => {
                 <th className="px-6 py-4 font-semibold">Company Name</th>
                 <th className="px-6 py-4 font-semibold">Contact</th>
                 <th className="px-6 py-4 font-semibold">Status</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-6 py-4 font-semibold text-right">Blocking</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -71,14 +81,25 @@ const ManageOwners = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {owner.status === 'pending' ? (
-                      <div className="flex justify-end gap-3">
-                        <button onClick={() => updateStatus(owner._id, 'approved')} className="text-green-600 hover:text-green-900 font-semibold hover:underline">Approve</button>
-                        <button onClick={() => updateStatus(owner._id, 'rejected')} className="text-red-600 hover:text-red-900 font-semibold hover:underline">Reject</button>
-                      </div>
-                    ) : (
-                      <div className="text-gray-400">Action taken</div>
-                    )}
+                    <div className="flex justify-end items-center gap-6">
+                      {owner.status === 'pending' && (
+                        <div className="flex gap-4">
+                          <button onClick={() => updateStatus(owner._id, 'approved')} className="text-green-600 hover:text-green-900 font-semibold hover:underline">Approve</button>
+                          <button onClick={() => updateStatus(owner._id, 'rejected')} className="text-red-600 hover:text-red-900 font-semibold hover:underline">Reject</button>
+                        </div>
+                      )}
+                      
+                      <button 
+                        onClick={() => toggleBlock(owner._id)}
+                        className={`min-w-[100px] px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                          owner.isBlocked 
+                            ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' 
+                            : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100'
+                        }`}
+                      >
+                        {owner.isBlocked ? 'Unblock' : 'Block'}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

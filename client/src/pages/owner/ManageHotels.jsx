@@ -82,8 +82,8 @@ const ManageHotels = () => {
 
   const fetchHotelRooms = async (hotelId) => {
     try {
-      const { data } = await axios.get(`/api/public/hotels/${hotelId}`);
-      setHotelRooms(data.rooms);
+      const { data } = await axios.get(`/api/owners/hotels/${hotelId}/rooms`, { withCredentials: true });
+      setHotelRooms(data);
     } catch (error) {
       toast.error('Failed to fetch rooms');
     }
@@ -376,9 +376,12 @@ const ManageHotels = () => {
                             <h4 className="font-bold text-gray-800 truncate">{room.type}</h4>
                             <span className="text-primary-600 font-bold">${room.price}</span>
                           </div>
-                          <div className="text-[10px] text-gray-500 flex gap-4 font-bold uppercase tracking-widest">
-                            <span>{room.capacity} Adults</span>
-                            <span>{room.quantity} Available</span>
+                          <div className="text-[10px] text-gray-500 flex flex-col gap-1 font-bold uppercase tracking-widest">
+                            <span>Capacity: {room.capacity} Adults</span>
+                            <div className="flex gap-4">
+                              <span className="text-gray-900">Total: {room.quantity}</span>
+                              <span className="text-green-600">Available: {room.availableCount}</span>
+                            </div>
                           </div>
                           <button 
                             onClick={() => handleDeleteRoom(room._id)}

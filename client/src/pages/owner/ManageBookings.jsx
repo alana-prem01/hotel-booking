@@ -39,9 +39,11 @@ const ManageBookings = () => {
                   <th className="px-6 py-4 font-semibold">Booking ID</th>
                   <th className="px-6 py-4 font-semibold">Guest</th>
                   <th className="px-6 py-4 font-semibold">Property</th>
+                  <th className="px-6 py-4 font-semibold">Room Type</th>
                   <th className="px-6 py-4 font-semibold">Dates</th>
                   <th className="px-6 py-4 font-semibold">Amount</th>
                   <th className="px-6 py-4 font-semibold">Status</th>
+                  <th className="px-6 py-4 font-semibold">Payment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -58,6 +60,9 @@ const ManageBookings = () => {
                       {booking.hotelId?.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {booking.roomId?.type}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       <div>In: {new Date(booking.checkIn).toLocaleDateString()}</div>
                       <div>Out: {new Date(booking.checkOut).toLocaleDateString()}</div>
                     </td>
@@ -71,6 +76,15 @@ const ManageBookings = () => {
                         'bg-yellow-100 text-yellow-800'
                       }`}>
                         {booking.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        booking.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                        booking.paymentStatus === 'refunded' ? 'bg-red-100 text-red-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {booking.paymentStatus}
                       </span>
                     </td>
                   </tr>

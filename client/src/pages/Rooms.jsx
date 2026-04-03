@@ -8,7 +8,7 @@ const Rooms = () => {
   const [loading, setLoading] = useState(true);
   
   // Filtering States
-  const [priceRange, setPriceRange] = useState(1000);
+  const [priceRange, setPriceRange] = useState(50000);
   const [type, setType] = useState('All');
   const [capacity, setCapacity] = useState('All');
 
@@ -93,15 +93,15 @@ const Rooms = () => {
             <input 
               type="range" 
               min="0" 
-              max="2000" 
-              step="50"
+              max="50000" 
+              step="100"
               value={priceRange}
               onChange={(e) => setPriceRange(e.target.value)}
               className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gold"
             />
             <div className="flex justify-between mt-2 text-[10px] font-bold text-gray-400">
               <span>$0</span>
-              <span>$2000</span>
+              <span>$50000</span>
             </div>
           </div>
 
@@ -132,7 +132,7 @@ const Rooms = () => {
           ) : filteredRooms.length === 0 ? (
              <div className="text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                <p className="text-gray-400 font-bold tracking-widest uppercase text-xs">No rooms found matching your criteria</p>
-               <button onClick={() => { setType('All'); setPriceRange(1000); setCapacity('All'); }} className="mt-4 text-gold text-[10px] font-bold tracking-widest underline uppercase">Reset Filters</button>
+               <button onClick={() => { setType('All'); setPriceRange(5000); setCapacity('All'); }} className="mt-4 text-gold text-[10px] font-bold tracking-widest underline uppercase">Reset Filters</button>
              </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
@@ -175,7 +175,7 @@ const Rooms = () => {
                       </span>
                     </div>
                     <Link 
-                      to={`/hotel/${room.hotelId?._id}`} 
+                      to={`/hotel/${room.hotelId?._id}?roomId=${room._id}`} 
                       className="inline-block w-full text-center py-4 bg-dark text-white text-[10px] font-bold tracking-[0.2em] rounded-full hover:bg-gold transition-all duration-300 shadow-xl shadow-dark/10"
                     >
                       VIEW DETAILS & BOOK

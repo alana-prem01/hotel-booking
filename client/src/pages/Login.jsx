@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 const Login = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const urlRole = queryParams.get('role');
+  const urlRole = queryParams.get('role') || (location.pathname.includes('admin') ? 'admin' : null);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,38 +42,37 @@ const Login = () => {
         </h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {!urlRole && (
+          {!urlRole && role !== 'admin' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Login As</label>
-              <div className="grid grid-cols-3 gap-2">
-                <button type="button" onClick={() => setRole('user')} className={`py-2 rounded-lg text-sm font-medium transition-all ${role === 'user' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>User</button>
-                <button type="button" onClick={() => setRole('owner')} className={`py-2 rounded-lg text-sm font-medium transition-all ${role === 'owner' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Owner</button>
-                <button type="button" onClick={() => setRole('admin')} className={`py-2 rounded-lg text-sm font-medium transition-all ${role === 'admin' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Admin</button>
+              <div className="grid grid-cols-2 gap-4">
+                <button type="button" onClick={() => setRole('user')} className={`py-2 rounded-lg text-sm font-medium transition-all ${role === 'user' ? 'bg-dark text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>User</button>
+                <button type="button" onClick={() => setRole('owner')} className={`py-2 rounded-lg text-sm font-medium transition-all ${role === 'owner' ? 'bg-dark text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Owner</button>
               </div>
             </div>
           )}
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all placeholder-gray-400" placeholder="Enter your email" />
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-dark focus:border-transparent outline-none transition-all placeholder-gray-400" placeholder="Enter your email" />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="block text-sm font-medium text-gray-700">Password</label>
-              <Link to="/forgot-password" size="sm" className="text-xs text-primary-600 hover:underline">Forgot password?</Link>
+              <Link to="/forgot-password" size="sm" className="text-xs text-slate-600 hover:underline">Forgot password?</Link>
             </div>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all placeholder-gray-400" placeholder="••••••••" />
+            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-dark focus:border-transparent outline-none transition-all placeholder-gray-400" placeholder="••••••••" />
           </div>
 
-          <button type="submit" className="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <button type="submit" className="w-full py-3 px-4 bg-dark hover:bg-slate-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark">
             Sign In
           </button>
         </form>
 
         <p className="mt-6 text-center text-gray-600 text-sm">
           Don't have an account?{' '}
-          <Link to="/register" className="text-primary-600 hover:text-primary-700 font-semibold hover:underline">Sign up</Link>
+          <Link to="/register" className="text-dark hover:text-slate-700 font-semibold hover:underline">Sign up</Link>
         </p>
       </div>
     </div>

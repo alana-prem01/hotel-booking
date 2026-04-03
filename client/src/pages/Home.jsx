@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import hero_hd from '../assets/hero_hd.png';
 
 const Home = () => {
   const [hotels, setHotels] = useState([]);
@@ -84,7 +85,7 @@ const Home = () => {
         <div className="lg:w-1/2 relative">
           <div className="rounded-[2.5rem] overflow-hidden shadow-2xl relative">
             <img 
-              src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=80" 
+              src={hero_hd} 
               alt="Luxury Hotel" 
               className="w-full h-[600px] object-cover"
             />
@@ -97,7 +98,7 @@ const Home = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 grid lg:grid-cols-2 gap-20 items-center">
         <div className="grid grid-cols-2 gap-4 relative">
           <div className="space-y-4">
-            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80" alt="Room" className="rounded-lg h-64 w-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=95" alt="Room" className="rounded-lg h-64 w-full object-cover shadow-lg" />
             <div className="bg-dark rounded-full w-32 h-32 flex items-center justify-center text-center p-4 border-8 border-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
               <div>
                 <span className="block text-2xl font-bold text-white leading-none">15+</span>
@@ -106,7 +107,7 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-12">
-            <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&q=80" alt="Hotel" className="rounded-lg h-80 w-full object-cover shadow-xl" />
+            <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&q=95" alt="Hotel" className="rounded-lg h-80 w-full object-cover shadow-2xl" />
           </div>
         </div>
         <div>
@@ -180,67 +181,47 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- FACILITIES SECTION --- */}
-      <section className="bg-dark py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-             <h2 className="text-4xl lg:text-5xl font-bold text-white leading-[1.2] mb-8 font-display">
-              We strive to provide a <br />
-              range of facilities & <br />
-              amenities to enhance <br />
-              your stay and ensure <br />
-              your comfort.
+      {/* --- FACILITIES SECTION - REDESIGNED --- */}
+      <section className="bg-slate-50 py-32 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-20 items-end">
+          <div className="lg:mb-10">
+             <div className="inline-block px-4 py-1.5 bg-slate-200/50 rounded-full mb-6">
+               <span className="text-[10px] font-bold tracking-[0.2em] text-slate-600 uppercase">Premium Amenities</span>
+             </div>
+             <h2 className="text-4xl lg:text-5xl font-bold text-dark leading-[1.2] mb-8 font-display">
+              Elevating every<br />
+              moment of your<br />
+              refined stay.
             </h2>
-            <button className="bg-white text-dark px-8 py-4 text-xs font-bold tracking-widest hover:bg-gold hover:text-white transition-colors">
-              LEARN MORE
+            <p className="text-slate-500 text-sm mb-10 max-w-md leading-relaxed">
+              We strive to provide a world-class range of facilities designed to enhance your comfort and ensure a seamless experience of luxury.
+            </p>
+            <button className="bg-dark text-white px-10 py-5 text-xs font-bold tracking-widest hover:bg-slate-800 transition-all duration-300 shadow-xl shadow-dark/10">
+              EXPLORE ALL AMENITIES
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
             {[
-              { title: 'Fast Baggage Hand', desc: 'Secure and quick baggage handling for your convenience.' },
-              { title: 'Lunch & Dinner', desc: 'Exquisite dining experiences with international cuisines.' },
-              { title: 'Beauty & Spa', desc: 'Revitalize your senses with our premium spa treatments.' },
-              { title: 'Swimming Pool', desc: 'Temperature controlled outdoor pool with panoramic views.' }
+              { title: 'Bespoke Service', desc: 'Personalized baggage handling and dedicated concierge.' },
+              { title: 'Fine Dining', desc: 'Culinary excellence with curated international menus.' },
+              { title: 'Serene Spa', desc: 'Rejuvenate with our signature wellness treatments.' },
+              { title: 'Infinity Pool', desc: 'Stunning views from our temperature-controlled pool.' }
             ].map((f, i) => (
-              <div key={i} className="flex gap-4 p-4 border border-gray-800 hover:border-gold/50 transition-colors">
-                <div className="w-12 h-12 rounded-full bg-[#2A2A2A] flex-shrink-0 flex items-center justify-center border border-gray-700">
-                  <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div key={i} className="group bg-white p-10 border border-slate-100 hover:border-dark transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-200/50 rounded-3xl">
+                <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mb-8 group-hover:bg-dark group-hover:text-white transition-colors duration-500">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-white font-bold mb-2 tracking-wide uppercase text-xs">{f.title}</h4>
-                  <p className="text-gray-400 text-xs leading-relaxed">{f.desc}</p>
-                </div>
+                <h4 className="text-dark font-bold mb-3 tracking-widest uppercase text-xs font-display">{f.title}</h4>
+                <p className="text-slate-400 text-xs leading-relaxed group-hover:text-slate-500 transition-colors">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- TESTIMONIALS SECTION --- */}
-      <section className="py-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative border-t border-gray-100 pt-20">
-             <div className="absolute top-10 left-0">
-               <svg className="w-16 h-16 text-gray-100 fill-current" viewBox="0 0 24 24">
-                 <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H16.017C14.9124 8 14.017 7.10457 14.017 6V4H20.017V8H22.017V15C22.017 16.6569 20.6739 18 19.017 18H16.017L16.017 21H14.017ZM1.017 21L1.017 18C1.017 16.8954 1.91243 16 3.017 16H6.017C6.56928 16 7.017 15.5523 7.017 15V9C7.017 8.44772 6.56928 8 6.017 8H3.017C1.91243 8 1.017 7.10457 1.017 6V4H7.017V8H9.017V15C9.017 16.6569 7.67389 18 6.017 18H3.017L3.017 21H1.017Z" />
-               </svg>
-             </div>
-             
-             <div className="max-w-4xl mx-auto text-center">
-               <p className="text-2xl lg:text-3xl font-medium text-dark leading-relaxed italic mb-10">
-                 "I had an incredible stay at this hotel! The staff was very welcoming and attentive, and the facilities were top-notch. The room was spacious, clean, and beautifully designed. The breakfast buffet was delicious with a wide."
-               </p>
-               <div className="flex flex-col items-center">
-                 <img src="https://i.pravatar.cc/100?img=32" alt="Reviewer" className="w-16 h-16 rounded-full border-4 border-white shadow-lg mb-4" />
-                 <h5 className="font-bold text-dark">Alex Nikifov</h5>
-                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Client Review</p>
-               </div>
-             </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

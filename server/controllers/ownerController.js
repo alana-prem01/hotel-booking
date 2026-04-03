@@ -215,3 +215,34 @@ export const deleteHotel = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+export const getOwnerHotelRooms = async (req, res) => {
+  try {
+    const hotel = await Hotel.findById(req.params.id);
+    if (!hotel || hotel.ownerId.toString() !== req.user._id.toString()) {
+      return res.status(404).json({ message: 'Hotel not found or unauthorized' });
+    }
+
+    const rooms = await Room.find({ hotelId: hotel._id }).lean();
+    const today = new Date();
+    
+    const roomsWithAvailability = await Promise.all(rooms.map(async (room) => {
+      const activeBookingsCount = await Booking.countDocuments({
+        roomId: room._id,
+        status: { $ne: 'cancelled' },
+        $and: [
+          { checkIn: { $lte: today } },
+          { checkOut: { $gt: today } }
+        ]
+      });
+      return {
+        ...room,
+        availableCount: Math.max(0, room.quantity - activeBookingsCount)
+      };
+    }));
+
+    res.json(roomsWithAvailability);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
