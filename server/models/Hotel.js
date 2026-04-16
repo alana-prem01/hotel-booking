@@ -11,15 +11,12 @@ const hotelSchema = new mongoose.Schema(
     location: {
       city: { type: String, required: true },
       address: { type: String, required: true },
-      state: { type: String },
-      country: { type: String },
-      zipCode: { type: String },
+      lat: { type: Number },
+      lng: { type: Number },
     },
     description: { type: String, required: true },
     images: [{ type: String }],
     amenities: [{ type: String }],
-    rating: { type: Number, default: 0 },
-    numReviews: { type: Number, default: 0 },
     basePricePerNight: { type: Number, required: true },
   },
   { timestamps: true }

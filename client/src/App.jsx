@@ -15,6 +15,7 @@ import HotelDetails from './pages/HotelDetails';
 import Checkout from './pages/Checkout';
 import UserProfile from './pages/UserProfile';
 import ForgotPassword from './pages/ForgotPassword';
+import MapSearch from './pages/MapSearch';
 
 // Owner Pages
 import OwnerDashboard from './pages/owner/OwnerDashboard';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/admin-login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/map" element={<MapSearch />} />
           
           {/* Protected Routes for User */}
           <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>

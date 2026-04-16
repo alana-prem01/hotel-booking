@@ -11,6 +11,8 @@ const ManageHotels = () => {
     name: '',
     city: '',
     address: '',
+    lat: '',
+    lng: '',
     description: '',
     basePricePerNight: '',
     // Just using a single comma-separated text input for amenities for simplicity
@@ -70,6 +72,8 @@ const ManageHotels = () => {
       name: hotel.name,
       city: hotel.location.city,
       address: hotel.location.address,
+      lat: hotel.location.lat || '',
+      lng: hotel.location.lng || '',
       description: hotel.description,
       basePricePerNight: hotel.basePricePerNight,
       amenities: hotel.amenities.join(', '),
@@ -182,6 +186,8 @@ const ManageHotels = () => {
         location: {
           city: formData.city,
           address: formData.address,
+          lat: formData.lat ? Number(formData.lat) : undefined,
+          lng: formData.lng ? Number(formData.lng) : undefined,
         },
         description: formData.description,
         basePricePerNight: Number(formData.basePricePerNight),
@@ -202,7 +208,7 @@ const ManageHotels = () => {
       setShowAddForm(false);
       setEditingHotel(null);
       setFormData({ 
-        name: '', city: '', address: '', description: '', basePricePerNight: '', amenities: '',
+        name: '', city: '', address: '', lat: '', lng: '', description: '', basePricePerNight: '', amenities: '',
       });
       setImage(null);
       setImagePreview(null);
@@ -217,7 +223,7 @@ const ManageHotels = () => {
     setShowAddForm(false);
     setEditingHotel(null);
     setFormData({ 
-      name: '', city: '', address: '', description: '', basePricePerNight: '', amenities: '',
+      name: '', city: '', address: '', lat: '', lng: '', description: '', basePricePerNight: '', amenities: '',
     });
     setImagePreview(null);
     setImage(null);
@@ -255,6 +261,14 @@ const ManageHotels = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                 <input required type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="w-full border-gray-300 rounded-lg px-4 py-2 border focus:ring-primary-500 focus:border-primary-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                <input type="number" step="any" placeholder="e.g. 51.505" value={formData.lat} onChange={(e) => setFormData({...formData, lat: e.target.value})} className="w-full border-gray-300 rounded-lg px-4 py-2 border focus:ring-primary-500 focus:border-primary-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                <input type="number" step="any" placeholder="e.g. -0.09" value={formData.lng} onChange={(e) => setFormData({...formData, lng: e.target.value})} className="w-full border-gray-300 rounded-lg px-4 py-2 border focus:ring-primary-500 focus:border-primary-500 outline-none" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Amenities (comma separated)</label>
