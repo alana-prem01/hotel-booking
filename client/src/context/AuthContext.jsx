@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
+import API from '../api/axios';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -17,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, role) => {
     try {
-      const { data } = await axios.post('/api/auth/login', { email, password, role });
+      const { data } = await API.post('/api/auth/login', { email, password, role });
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -28,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (name, email, password) => {
     try {
-      const { data } = await axios.post('/api/auth/register', { name, email, password });
+      const { data } = await API.post('/api/auth/register', { name, email, password });
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -39,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerOwner = async (ownerData) => {
     try {
-      const { data } = await axios.post('/api/auth/register-owner', ownerData);
+      const { data } = await API.post('/api/auth/register-owner', ownerData);
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -50,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('/api/auth/logout');
+      await API.post('/api/auth/logout');
       setUser(null);
       localStorage.removeItem('userInfo');
     } catch (error) {
