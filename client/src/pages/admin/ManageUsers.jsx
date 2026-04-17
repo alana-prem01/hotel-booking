@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const ManageUsers = () => {
@@ -12,7 +12,7 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get('/api/admin/users', { withCredentials: true });
+      const { data } = await API.get('/api/admin/users', { withCredentials: true });
       setUsers(data);
     } catch (error) {
       toast.error('Failed to fetch users');
@@ -22,7 +22,7 @@ const ManageUsers = () => {
 
   const toggleBlock = async (id, currentStatus) => {
     try {
-      const { data } = await axios.put(`/api/admin/users/${id}/block`, {}, { withCredentials: true });
+      const { data } = await API.put(`/api/admin/users/${id}/block`, {}, { withCredentials: true });
       toast.success(data.message);
       setUsers(users.map(u => u._id === id ? { ...u, isBlocked: !currentStatus } : u));
     } catch (error) {

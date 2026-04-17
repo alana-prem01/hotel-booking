@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import API from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -13,7 +13,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const { data } = await axios.get('/api/users/bookings', { withCredentials: true });
+        const { data } = await API.get('/api/users/bookings', { withCredentials: true });
         setBookings(data);
         setLoading(false);
       } catch (error) {
@@ -27,7 +27,7 @@ const UserProfile = () => {
   const handleCancelBooking = async (id) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
       try {
-        await axios.put(`/api/users/bookings/${id}/cancel`, {}, { withCredentials: true });
+        await API.put(`/api/users/bookings/${id}/cancel`, {}, { withCredentials: true });
         toast.success('Booking cancelled');
         setBookings(bookings.map(b => b._id === id ? { ...b, status: 'cancelled' } : b));
       } catch (error) {

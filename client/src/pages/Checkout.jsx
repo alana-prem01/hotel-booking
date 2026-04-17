@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import axios from 'axios';
+import API from '../api/axios';
 import toast from 'react-hot-toast';
 
 // Loads Razorpay SDK dynamically
@@ -35,7 +35,7 @@ const Checkout = () => {
 
   // Helper to create booking record in DB after successful payment
   const createBookingRecord = async (paymentId, paymentMethodType) => {
-    const { data } = await axios.post('/api/users/bookings', {
+    const { data } = await API.post('/api/users/bookings', {
       hotelId,
       roomId,
       checkIn,
@@ -60,7 +60,7 @@ const Checkout = () => {
       }
 
       // 2. Create order on backend
-      const { data: orderData } = await axios.post('/api/payment/create-order', {
+      const { data: orderData } = await API.post('/api/payment/create-order', {
         amount: totalAmount,
       }, { withCredentials: true });
 
@@ -80,7 +80,7 @@ const Checkout = () => {
         handler: async (response) => {
           try {
             // 4. Verify payment signature on backend
-            const { data: verifyData } = await axios.post('/api/payment/verify', {
+            const { data: verifyData } = await API.post('/api/payment/verify', {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,

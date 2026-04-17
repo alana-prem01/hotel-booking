@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const ManageBookings = () => {
@@ -12,7 +12,7 @@ const ManageBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const { data } = await axios.get('/api/owners/bookings', { withCredentials: true });
+      const { data } = await API.get('/api/owners/bookings', { withCredentials: true });
       setBookings(data);
     } catch (error) {
       toast.error('Failed to fetch bookings');

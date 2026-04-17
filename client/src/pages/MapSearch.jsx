@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../api/axios';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
@@ -65,7 +65,7 @@ const MapSearch = () => {
   const fetchHotels = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/public/hotels');
+      const { data } = await API.get('/api/public/hotels');
       setHotels(data);
     } catch (error) {
       console.error('Failed to fetch hotels:', error);

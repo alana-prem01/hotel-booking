@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios';
 import hero_hd from '../assets/hero_hd.png';
 
 const Home = () => {
@@ -21,8 +21,8 @@ const Home = () => {
     try {
       setLoading(true);
       const [hotelsRes, roomsRes] = await Promise.all([
-        axios.get('/api/public/hotels', { params }),
-        axios.get('/api/public/rooms', { params }) // Ensure rooms are also filtered
+        API.get('/api/public/hotels', { params }),
+        API.get('/api/public/rooms', { params }) // Ensure rooms are also filtered
       ]);
       setHotels(hotelsRes.data);
       setRooms(roomsRes.data);

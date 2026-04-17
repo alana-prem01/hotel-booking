@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { assets } from '../assets/assets';
@@ -25,7 +25,7 @@ const HotelDetails = () => {
   useEffect(() => {
     const fetchHotel = async () => {
       try {
-        const { data } = await axios.get(`/api/public/hotels/${id}`);
+        const { data } = await API.get(`/api/public/hotels/${id}`);
         setHotel(data.hotel);
         setRooms(data.rooms);
         setLoading(false);
@@ -63,7 +63,7 @@ const HotelDetails = () => {
 
       setCheckingAvailability(true);
       try {
-        const { data } = await axios.get(`/api/public/rooms/${selectedRoom}/availability`, {
+        const { data } = await API.get(`/api/public/rooms/${selectedRoom}/availability`, {
           params: { checkIn, checkOut }
         });
         setAvailability({ 
@@ -94,7 +94,7 @@ const HotelDetails = () => {
     setCheckingAvailability(true);
     try {
       // Final fresh check before checkout
-      const { data } = await axios.get(`/api/public/rooms/${selectedRoom}/availability`, {
+      const { data } = await API.get(`/api/public/rooms/${selectedRoom}/availability`, {
         params: { checkIn, checkOut }
       });
       

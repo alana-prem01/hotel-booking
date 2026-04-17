@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../api/axios';
 import { Link } from 'react-router-dom';
 
 const Rooms = () => {
@@ -23,7 +23,7 @@ const Rooms = () => {
   const fetchRooms = async () => {
     try {
       console.log('Fetching rooms...');
-      const { data } = await axios.get('/api/public/rooms');
+      const { data } = await API.get('/api/public/rooms');
       console.log('Rooms fetched:', data);
       setRooms(data);
       setFilteredRooms(data);

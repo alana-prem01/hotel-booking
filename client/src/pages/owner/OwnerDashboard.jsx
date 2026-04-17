@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../api/axios';
 import { AuthContext } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -12,7 +12,7 @@ const OwnerDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get('/api/owners/dashboard', { withCredentials: true });
+        const { data } = await API.get('/api/owners/dashboard', { withCredentials: true });
         setStats(data);
         setLoading(false);
       } catch (error) {

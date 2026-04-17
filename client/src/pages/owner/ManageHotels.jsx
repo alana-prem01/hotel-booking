@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../api/axios';
 import toast from 'react-hot-toast';
 import { assets } from '../../assets/assets';
 
@@ -46,7 +46,7 @@ const ManageHotels = () => {
 
   const fetchHotels = async () => {
     try {
-      const { data } = await axios.get('/api/owners/hotels', { withCredentials: true });
+      const { data } = await API.get('/api/owners/hotels', { withCredentials: true });
       setHotels(data);
     } catch (error) {
       toast.error('Failed to fetch hotels');
@@ -57,7 +57,7 @@ const ManageHotels = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this property? This will also delete all associated rooms.')) {
       try {
-        await axios.delete(`/api/owners/hotels/${id}`, { withCredentials: true });
+        await API.delete(`/api/owners/hotels/${id}`, { withCredentials: true });
         toast.success('Property deleted successfully');
         fetchHotels();
       } catch (error) {
@@ -86,7 +86,7 @@ const ManageHotels = () => {
 
   const fetchHotelRooms = async (hotelId) => {
     try {
-      const { data } = await axios.get(`/api/owners/hotels/${hotelId}/rooms`, { withCredentials: true });
+      const { data } = await API.get(`/api/owners/hotels/${hotelId}/rooms`, { withCredentials: true });
       setHotelRooms(data);
     } catch (error) {
       toast.error('Failed to fetch rooms');
@@ -107,7 +107,7 @@ const ManageHotels = () => {
       if (roomImage) {
         const uploadData = new FormData();
         uploadData.append('image', roomImage);
-        const { data } = await axios.post('/api/owners/upload', uploadData, {
+        const { data } = await API.post('/api/owners/upload', uploadData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true
         });
@@ -124,7 +124,7 @@ const ManageHotels = () => {
         images: roomImageUrl ? [roomImageUrl] : []
       };
 
-      await axios.post(`/api/owners/hotels/${selectedHotel._id}/rooms`, payload, { withCredentials: true });
+      await API.post(`/api/owners/hotels/${selectedHotel._id}/rooms`, payload, { withCredentials: true });
       toast.success('Room added successfully');
       setRoomFormData({ type: '', price: '', capacity: '2', quantity: '1', amenities: '' });
       setRoomImage(null);
@@ -139,7 +139,7 @@ const ManageHotels = () => {
   const handleDeleteRoom = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room type?')) {
       try {
-        await axios.delete(`/api/owners/rooms/${roomId}`, { withCredentials: true });
+        await API.delete(`/api/owners/rooms/${roomId}`, { withCredentials: true });
         toast.success('Room type deleted successfully');
         fetchHotelRooms(selectedHotel._id);
       } catch (error) {
@@ -173,7 +173,7 @@ const ManageHotels = () => {
       if (image) {
         const uploadData = new FormData();
         uploadData.append('image', image);
-        const { data } = await axios.post('/api/owners/upload', uploadData, {
+        const { data } = await API.post('/api/owners/upload', uploadData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true
         });
@@ -198,10 +198,10 @@ const ManageHotels = () => {
       };
 
       if (editingHotel) {
-        await axios.put(`/api/owners/hotels/${editingHotel._id}`, payload, { withCredentials: true });
+        await API.put(`/api/owners/hotels/${editingHotel._id}`, payload, { withCredentials: true });
         toast.success('Property updated successfully');
       } else {
-        await axios.post('/api/owners/hotels', payload, { withCredentials: true });
+        await API.post('/api/owners/hotels', payload, { withCredentials: true });
         toast.success('Property and initial room created successfully');
       }
 

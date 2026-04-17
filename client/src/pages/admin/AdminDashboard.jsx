@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
@@ -13,7 +13,7 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const { data } = await axios.get('/api/admin/dashboard', { withCredentials: true });
+      const { data } = await API.get('/api/admin/dashboard', { withCredentials: true });
       setStats(data);
       setLoading(false);
     } catch (error) {

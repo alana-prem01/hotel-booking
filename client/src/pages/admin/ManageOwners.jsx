@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const ManageOwners = () => {
@@ -12,7 +12,7 @@ const ManageOwners = () => {
 
   const fetchOwners = async () => {
     try {
-      const { data } = await axios.get('/api/admin/owners', { withCredentials: true });
+      const { data } = await API.get('/api/admin/owners', { withCredentials: true });
       setOwners(data);
     } catch (error) {
       toast.error('Failed to fetch owners');
@@ -22,7 +22,7 @@ const ManageOwners = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(`/api/admin/owners/${id}/status`, { status }, { withCredentials: true });
+      await API.put(`/api/admin/owners/${id}/status`, { status }, { withCredentials: true });
       toast.success(`Owner has been ${status}`);
       setOwners(owners.map(o => o._id === id ? { ...o, status } : o));
     } catch (error) {
@@ -32,7 +32,7 @@ const ManageOwners = () => {
 
   const toggleBlock = async (id) => {
     try {
-      const { data } = await axios.put(`/api/admin/owners/${id}/block`, {}, { withCredentials: true });
+      const { data } = await API.put(`/api/admin/owners/${id}/block`, {}, { withCredentials: true });
       toast.success(data.message);
       setOwners(owners.map(o => o._id === id ? { ...o, isBlocked: data.owner.isBlocked } : o));
     } catch (error) {
